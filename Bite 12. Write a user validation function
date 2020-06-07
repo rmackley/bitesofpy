@@ -1,0 +1,53 @@
+"""
+This is an excersize to practice custom error classes
+"""
+
+from collections import namedtuple
+
+User = namedtuple('User', 'name role expired')
+USER, ADMIN = 'user', 'admin'
+SECRET = 'I am a very secret token'
+
+julian = User(name='Julian', role=USER, expired=False)
+bob = User(name='Bob', role=USER, expired=True)
+pybites = User(name='PyBites', role=ADMIN, expired=False)
+USERS = (julian, bob, pybites)
+
+class UserDoesNotExist(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+class UserAccessExpired(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+class UserNoPermission(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+def get_secret_token(username):
+    valid_users = []
+    valid_user_index = 0
+    for i in range(len(USERS)):
+        valid_users.append(USERS[i][0])
+    print(valid_users)
+    if username in valid_users:
+        valid_user_index = valid_users.index(username)
+        if not getattr(USERS[valid_user_index], 'expired'):
+            if getattr(USERS[valid_user_index], 'role') == 'admin':
+                return SECRET
+            else:
+                raise UserNoPermission('User does not have permission.')
+        else:
+            raise UserAccessExpired('User access has expired.')
+    else:
+        raise UserDoesNotExist('That user does not exist.')
