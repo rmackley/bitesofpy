@@ -1,0 +1,39 @@
+"""
+This exercise is to practice using the collections Counter library
+"""
+import os
+import urllib.request
+import re
+from collections import Counter
+
+# data provided
+tmp = os.getenv("TMP", "/tmp")
+stopwords_file = os.path.join(tmp, 'stopwords')
+harry_text = os.path.join(tmp, 'harry')
+urllib.request.urlretrieve(
+    'https://bites-data.s3.us-east-2.amazonaws.com/stopwords.txt',
+    stopwords_file
+)
+urllib.request.urlretrieve(
+    'https://bites-data.s3.us-east-2.amazonaws.com/harry.txt',
+    harry_text
+)
+
+
+def get_harry_most_common_word():
+    words_to_remove = []
+    story = []
+    with open(harry_text, encoding='utf8') as f:
+        contents = f.readlines()
+    with open(stopwords_file, encoding='utf8') as s:
+        remove = s.readlines()
+    for word in remove:
+        words_to_remove.append(word.strip())
+
+    for line in contents:
+       for word in line.split():
+           all_chars = re.sub(r'\W+', '', word)
+           if all_chars.lower() not in words_to_remove and all_chars.lower() != "":
+               story.append(all_chars.lower())
+    c = Counter(story)
+    return c.most_common(1)[0]
