@@ -1,0 +1,30 @@
+"""
+Create a deck of Paw Patrol cards. Optional input is the number of letters (ie: 8 = A-H, 16= A-P).
+Deck is made of cards 1-4 for each letter. A1, A2, A3, A4, etc
+One card in each set of 4 gets a random action from ACTIONS
+"""
+
+from collections import namedtuple
+import random
+
+ACTIONS = ['draw_card', 'play_again',
+           'interchange_cards', 'change_turn_direction']
+NUMBERS = range(1, 5)
+
+PawCard = namedtuple('PawCard', 'card action')
+
+def create_paw_deck(n=8):
+    if n > 26:
+        raise ValueError("N cannot be larger than 26")
+
+    deck_of_cards = []
+
+    for i in range(0, n):
+        action_card = random.choice(NUMBERS)
+        for j in NUMBERS:
+            print(chr(i+65), j)
+            if j == action_card:
+                deck_of_cards.append(PawCard(f"{chr(i+65)}{j}", random.choice(ACTIONS)))
+            else:
+                deck_of_cards.append(PawCard(f"{chr(i+65)}{j}", None))
+    return deck_of_cards
